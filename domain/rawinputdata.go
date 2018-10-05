@@ -1,5 +1,10 @@
 package domain
 
+import (
+	"errors"
+	"net/http"
+)
+
 type RawInputData struct {
 	ID               string `json:"id"`
 	Time             string `json:"time"`
@@ -17,4 +22,12 @@ type RawInputData struct {
 	ElevationAngle   int    `json:"elevationAngle"`
 	O2               int    `json:"o2"`
 	FuelFlow         int    `json:"fuelFlow"`
+}
+
+func (vdata *RawInputData) Bind(r *http.Request) error {
+	if vdata.ID == "" {
+		return errors.New("missing required RawInputData fields.")
+	}
+
+	return nil
 }

@@ -1,5 +1,10 @@
 package domain
 
+import (
+	"errors"
+	"net/http"
+)
+
 type VehicleData struct {
 	ID               string `json:"id"`
 	Weight           int    `json:"weight"`
@@ -14,4 +19,12 @@ type VehicleData struct {
 	ElevationAngle   int    `json:"elevationAngle"`
 	O2               int    `json:"o2"`
 	FuelFlow         int    `json:"fuelFlow"`
+}
+
+func (vdata *VehicleData) Bind(r *http.Request) error {
+	if vdata.ID == "" {
+		return errors.New("missing required VehicleData fields.")
+	}
+
+	return nil
 }

@@ -1,15 +1,26 @@
 package services
 
-import "wim-api/domain"
+import (
+	"wim-api/domain"
+	"wim-api/repository"
+)
 
-func processVehicleData(data domain.VehicleData) {
+func ProcessVehicleData(data domain.VehicleData) (string, error) {
+	var err error
+	if _, err := repository.AddVehicleData(data); err != nil {
+		panic("Error in Processing Vehicle Data")
+		return "", nil
+
+	}
+
+	return "Success", err
 
 }
 
-func processWetherData(data domain.WeatherData) {
+func ProcessWetherData(data domain.WeatherData) {
 
 }
 
-func processTrainingData(data domain.TrainingData) {
-
+func ProcessTrainingData(data domain.TrainingData) error {
+	return nil
 }

@@ -21,7 +21,7 @@ func main() {
 	})
 	r.Route("/ecudata", func(r chi.Router) {
 		r.Post("/simple", api.VehicleDataHandler)
-		//	r.Post("/bulk",api.BulkVehicleDataHandler)
+		//r.Post("/bulk",api.BulkVehicleDataHandler)
 
 	})
 	/*	r.Route("/trainngdata", func(r chi.Router) {
