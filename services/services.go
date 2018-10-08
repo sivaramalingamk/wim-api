@@ -8,7 +8,7 @@ import (
 func ProcessVehicleData(data domain.VehicleData) (string, error) {
 	var err error
 	if _, err := repository.AddVehicleData(data); err != nil {
-		panic("Error in Processing Vehicle Data")
+		println("Error in Processing Vehicle Data")
 		return "", nil
 
 	}
@@ -21,6 +21,15 @@ func ProcessWetherData(data domain.WeatherData) {
 
 }
 
-func ProcessTrainingData(data domain.TrainingData) error {
-	return nil
+func ProcessTrainingData(data domain.TrainingData) (string, error) {
+
+	var err error
+	if _, err := repository.AddTrainingData(data); err != nil {
+		println("Error in Processing Training Data")
+		return "", nil
+
+	}
+
+	return "Success", err
+
 }

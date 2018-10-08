@@ -10,6 +10,7 @@ import (
 
 func main() {
 	fmt.Println(" This is a Server")
+
 	r := chi.NewRouter()
 	// A good base middleware stack
 	r.Use(middleware.RequestID)
@@ -20,16 +21,11 @@ func main() {
 		w.Write([]byte("welcome"))
 	})
 	r.Route("/ecudata", func(r chi.Router) {
-		r.Post("/simple", api.VehicleDataHandler)
-		//r.Post("/bulk",api.BulkVehicleDataHandler)
+		r.Post("/simple", api.SimpleDataHandler)
+		r.Post("/bulk", api.BulkVehicleDataHandler)
 
 	})
-	/*	r.Route("/trainngdata", func(r chi.Router) {
-			r.Post("/simple",api.TrainingDataHandler)
-			r.Post("/bulk",api.BulkTrainingDataHandler)
-			r.Get("/{id}",api.TrainingDataHandler)
-		})
-	*/
+
 	http.ListenAndServe(":3000", r)
 
 }
