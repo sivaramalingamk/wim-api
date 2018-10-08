@@ -5,7 +5,6 @@ import (
 	"github.com/go-chi/render"
 	"math"
 	"net/http"
-	"strconv"
 	"wim-api/domain"
 	"wim-api/io"
 	"wim-api/services"
@@ -53,7 +52,7 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 		vdata, coord := bulkToSimple(data[i])
 		services.ProcessVehicleData(vdata)
-		if coordDiff(icoord, coord) {
+		if coordDiff(icoord, coord) { //to avoid frequent calls
 			io.WeatherAPI(coord)
 			icoord = coord
 		}
@@ -66,27 +65,12 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//@ if the coordinate difference is higher than the cordinate threshold then call weathermap api
 func coordDiff(coordinate1 domain.Coordinate, coordinate2 domain.Coordinate) bool {
 
-	la1, e1 := stf(coordinate1.Latitude)
-	la2, e2 := stf(coordinate2.Latitude)
-
-	lo1, e3 := stf(coordinate1.Longitude)
-	lo2, e4 := stf(coordinate2.Longitude)
-
-	if e1 == nil && e2 == nil && e3 == nil && e4 == nil {
-		if math.Abs(la1-la2) > 5 || math.Abs(lo1-lo2) > 5 {
-			return true
-		}
+	if math.Abs(coordinate1.Latitude-coordinate2.Latitude) > io.Coord_Threshold || math.Abs(coordinate1.Longitude-coordinate2.Longitude) > io.Coord_Threshold {
+		return true
 	}
+
 	return false
-}
-
-func stf(string2 string) (float64, error) {
-	val, err := strconv.ParseFloat(string2, 64)
-	if err != nil {
-		return 0, err
-	}
-
-	return val, nil
 }

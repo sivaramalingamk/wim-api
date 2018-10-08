@@ -1,6 +1,6 @@
 package domain
 
 type Coordinate struct {
-	Latitude  string `json:"lat"`
-	Longitude string `json:"lon"`
+	Latitude  float64 `json:"lat"`
+	Longitude float64 `json:"lon"`
 }
