@@ -13,9 +13,9 @@ func TestHomePage(t *testing.T) {
 	assert.Equal(t, 200, resp.StatusCode())
 }
 
-func TestIncomingRawData(t *testing.T) {
+func TestSimpleRawData(t *testing.T) {
 	data := domain.RawInputData{
-		ID:               "123",
+		ID:               "12322",
 		Time:             "2017",
 		Latitude:         "12234",
 		Longitude:        "12345",
@@ -32,10 +32,12 @@ func TestIncomingRawData(t *testing.T) {
 		O2:               20,
 		FuelFlow:         30,
 	}
+
 	resp, _ := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(data).
-		Post("http://localhost:3000/ecudata")
+		Post("http://localhost:3000/ecudata/simple")
+	//fmt.Println("The Result For Single Data Point Insertion Test ", repository.AddVehicleData(data))
 	fmt.Println("The Result For Single Data Point is ", resp)
 	fmt.Println("The Result For Single Data Point  ", resp.Status())
 	assert.Equal(t, "200 OK", resp.Status())
@@ -102,7 +104,7 @@ func TestIncomingRawDataCollection(t *testing.T) {
 	resp, _ := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(data).
-		Post("http://localhost:3000/bulkecudata")
+		Post("http://localhost:3000/ecudata/bulk")
 	fmt.Println("The Result For Collections is ", resp)
 	fmt.Println("The Result Collections is ", resp.Status())
 	assert.Equal(t, "200 OK", resp.Status())
