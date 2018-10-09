@@ -8,7 +8,7 @@ import (
 	"wim-api/domain"
 )
 
-func WeatherAPI(coordinate domain.Coordinate) (string, error) {
+func WeatherAPI(coordinate domain.Coordinate, id string) (domain.WeatherData, error) {
 	baseUrl := "https://api.openweathermap.org/data/2.5/weather"
 	appid := API_Key
 	url1 := fmt.Sprintf(baseUrl+"?lat=%f&lon=%f&appid=%s", coordinate.Latitude, coordinate.Longitude, appid)
@@ -26,9 +26,24 @@ func WeatherAPI(coordinate domain.Coordinate) (string, error) {
 	//fmt.Println("response Status:", resp.Status)
 	fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
-	var wdata map[string]interface{}
-	json.Unmarshal(body, &wdata)
+	owmdata := domain.OwmApiData{}
+	err1 := json.Unmarshal(body, &owmdata)
+	if err != nil {
+		panic(err1)
+	}
+	wdata := owmDataToWeather(owmdata, id)
+	fmt.Println("Temp=", wdata.AtmosphereTemp)
+	return wdata, err
+}
 
-	//fmt.Println("REquest=",req)
-	return string(body), err
+func owmDataToWeather(data domain.OwmApiData, id string) domain.WeatherData {
+	var wd domain.WeatherData
+	wd.ID = id
+	wd.AtmosphereTemp = int(data.Main.Temp)
+	wd.Humidity = data.Main.Humidity
+	wd.AtmospherePressure = int(data.Main.Pressure)
+	wd.WindDirection = data.Wind.Deg
+	wd.WindSpeed = int(data.Wind.Speed)
+
+	return wd
 }

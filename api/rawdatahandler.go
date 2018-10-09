@@ -28,7 +28,12 @@ func SimpleDataHandler(w http.ResponseWriter, r *http.Request) {
 	services.ProcessVehicleData(vdata)
 
 	w.Write([]byte("Sending TO Weather API :"))
-	w.Write([]byte(io.WeatherAPI(coord)))
+	owmRes, err1 := io.WeatherAPI(coord, vdata.ID)
+	if err1 != nil {
+		panic(err1)
+	}
+	services.ProcessWetherData(owmRes)
+	w.Write([]byte(owmRes.ID))
 
 	//services.ProcessWetherData(----)
 
@@ -53,7 +58,7 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 		vdata, coord := bulkToSimple(data[i])
 		services.ProcessVehicleData(vdata)
 		if coordDiff(icoord, coord) { //to avoid frequent calls
-			io.WeatherAPI(coord)
+			io.WeatherAPI(coord, vdata.ID)
 			icoord = coord
 		}
 

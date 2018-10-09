@@ -5,7 +5,7 @@ import (
 	"wim-api/domain"
 )
 
-func AddDomainData(data domain.WeatherData) (string, error) {
+func AddWeatherData(data domain.WeatherData) (string, error) {
 	fmt.Println(" **** Creating new data ****\n", data)
 	defer getCluster().Close()
 	if err := Session.Query("INSERT INTO weatherdata(id,atmospheretemp,humidity,windspeed,atmospherepressure,winddirection) values(?,?,?,?,?)",
