@@ -8,11 +8,9 @@ import (
 func AddWeatherData(data domain.WeatherData) (string, error) {
 	fmt.Println(" **** Creating new data ****\n", data)
 	defer getCluster().Close()
-	if err := Session.Query("INSERT INTO weatherdata(id,atmospheretemp,humidity,windspeed,atmospherepressure,winddirection) values(?,?,?,?,?)",
-		data.ID, data.AtmosphereTemp, data.Humidity, data.WindSpeed,
-		data.AtmospherePressure, data.WindDirection).Exec(); err != nil {
+	if err := Session.Query("INSERT INTO weatherdata(id,atmospherepressure,atmospheretemp,humidity,winddirection,windspeed) values(?,?,?,?,?,?)", data.ID, data.AtmospherePressure, data.AtmosphereTemp, data.Humidity, data.WindDirection, data.WindSpeed).Exec(); err != nil {
 
-		fmt.Println("Error while inserting Vehicle Data", err)
+		fmt.Println("Error while inserting Weather Data", err)
 		fmt.Println(err)
 		return "", err
 	}

@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/go-chi/render"
 	"math"
 	"net/http"
@@ -25,14 +26,18 @@ func SimpleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte("Vehicle data"))
 
-	services.ProcessVehicleData(vdata)
+	msg, err2 := services.ProcessVehicleData(vdata)
+	if err2 != nil {
+		fmt.Print("Error occured :", err2)
+	}
+	fmt.Println("message from svc.procesvehicledata: ", msg)
 
-	w.Write([]byte("Sending TO Weather API :"))
-	owmRes, err1 := io.WeatherAPI(coord, vdata.ID)
+	w.Write([]byte("\nSending TO Weather API :"))
+	owmRes, err1 := io.WeatherAPI(coord)
 	if err1 != nil {
 		panic(err1)
 	}
-	services.ProcessWetherData(owmRes)
+	services.ProcessWetherData(owmRes, vdata.ID)
 	w.Write([]byte(owmRes.ID))
 
 	//services.ProcessWetherData(----)
@@ -53,13 +58,25 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, icoord := bulkToSimple(data[0])
-	for i := range data {
+	wdata, err := io.WeatherAPI(icoord)
+	if err != nil {
+		w.Write([]byte("Error on Weather API"))
+	}
 
+	for i := range data {
 		vdata, coord := bulkToSimple(data[i])
 		services.ProcessVehicleData(vdata)
+
 		if coordDiff(icoord, coord) { //to avoid frequent calls
-			io.WeatherAPI(coord, vdata.ID)
+			wdata1, err := io.WeatherAPI(coord)
+			if err != nil {
+				w.Write([]byte("Error on Weather API"))
+			}
+			services.ProcessWetherData(wdata1, data[i].ID)
 			icoord = coord
+			wdata = wdata1
+		} else {
+			services.ProcessWetherData(wdata, data[i].ID)
 		}
 
 	}

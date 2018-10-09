@@ -17,8 +17,8 @@ func TestSimpleRawData(t *testing.T) {
 	data := domain.RawInputData{
 		ID:               "12322",
 		Time:             "2017",
-		Latitude:         "12234",
-		Longitude:        "12345",
+		Latitude:         122,
+		Longitude:        145,
 		Weight:           200,
 		VehicleSpeed:     20,
 		Acceleration:     20,
@@ -45,10 +45,10 @@ func TestSimpleRawData(t *testing.T) {
 
 func TestIncomingRawDataCollection(t *testing.T) {
 	data1 := domain.RawInputData{
-		ID:               "123",
+		ID:               "1223",
 		Time:             "2017",
-		Latitude:         "12234",
-		Longitude:        "12345",
+		Latitude:         34,
+		Longitude:        45,
 		Weight:           200,
 		VehicleSpeed:     20,
 		Acceleration:     20,
@@ -64,10 +64,10 @@ func TestIncomingRawDataCollection(t *testing.T) {
 	}
 
 	data2 := domain.RawInputData{
-		ID:               "567",
+		ID:               "5627",
 		Time:             "2017",
-		Latitude:         "12234",
-		Longitude:        "12345",
+		Latitude:         32,
+		Longitude:        43,
 		Weight:           200,
 		VehicleSpeed:     20,
 		Acceleration:     20,
@@ -83,10 +83,10 @@ func TestIncomingRawDataCollection(t *testing.T) {
 	}
 
 	data3 := domain.RawInputData{
-		ID:               "891",
+		ID:               "8921",
 		Time:             "2017",
-		Latitude:         "12234",
-		Longitude:        "12345",
+		Latitude:         36,
+		Longitude:        48,
 		Weight:           200,
 		VehicleSpeed:     20,
 		Acceleration:     20,
