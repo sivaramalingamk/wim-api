@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 	"wim-api/domain"
 )
 
@@ -16,4 +17,20 @@ func AddWeatherData(data domain.WeatherData) (string, error) {
 	}
 
 	return "Success", nil
+}
+
+func SelectWeatherData() (domain.WeatherDataCollection, string) {
+	defer getCluster().Close()
+	wdata := []domain.WeatherData{}
+	wDataCollection := domain.WeatherDataCollection{wdata}
+	temp := domain.WeatherData{}
+	iter := Session.Query(`SELECT id,atmospherepressure,atmospheretemp,humidity,winddirection,windspeed FROM weatherdata`).Iter()
+	for iter.Scan(&temp.ID, &temp.AtmospherePressure, &temp.AtmosphereTemp, &temp.Humidity, &temp.WindDirection, &temp.WindSpeed) {
+		wDataCollection.AddData(temp)
+	}
+	if err := iter.Close(); err != nil {
+		log.Fatal(err)
+		return wDataCollection, "Error"
+	}
+	return wDataCollection, "success"
 }

@@ -9,6 +9,7 @@ require (
 	github.com/gocql/gocql v0.0.0-20180929150753-7ce14ecfedc6
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/robfig/cron v0.0.0-20180505203441-b41be1df6967
 	github.com/stretchr/testify v1.2.2
 	golang.org/x/text v0.3.0 // indirect
 	gopkg.in/resty.v1 v1.9.1

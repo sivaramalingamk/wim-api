@@ -2,8 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"log"
-	"wim-api/api"
+	"github.com/gocql/gocql"
 	"wim-api/domain"
 )
 
@@ -19,4 +18,18 @@ func AddVehicleData(data domain.VehicleData) (string, error) {
 	}
 
 	return "Success", nil
+}
+
+func SelectVehicleData(id string) (domain.VehicleData, string) {
+	defer getCluster().Close()
+	temp := domain.VehicleData{}
+	err1 := Session.Query(`SELECT  id, acceleration, coolenttemp, elevationangle, engineload, fuelflow, headingdirection, intakeairtemp, o2, oilpressure, rpm, vehiclespeed, weight 
+	FROM vehicledata WHERE id=? LIMIT 1`, id).Consistency(gocql.One).Scan(&temp.ID, &temp.Acceleration, &temp.CoolentTemp, &temp.ElevationAngle, &temp.EngineLoad, &temp.FuelFlow, &temp.HeadingDirection, &temp.IntakeAirTemp, &temp.O2, &temp.OilPressure, &temp.Rpm, &temp.VehicleSpeed, &temp.Weight)
+
+	if err1 != nil {
+		fmt.Println("ERror")
+		return temp, "Error"
+	}
+
+	return temp, "success"
 }

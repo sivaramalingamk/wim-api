@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"wim-api/domain"
 	"wim-api/io"
+	"wim-api/repository"
 	"wim-api/services"
 )
 
@@ -95,4 +96,8 @@ func coordDiff(coordinate1 domain.Coordinate, coordinate2 domain.Coordinate) boo
 	}
 
 	return false
+}
+
+func ApiKeySetter() string {
+	return repository.SelectKey()
 }
