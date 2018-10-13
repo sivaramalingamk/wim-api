@@ -1,4 +1,4 @@
-FROM golang:1.10.3 as builder
+FROM golang:1.11.1 as builder
 
 WORKDIR ${GOPATH}/src/github.com/sivaramalingamk/wim-api
 COPY . .
