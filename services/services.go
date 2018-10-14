@@ -29,9 +29,20 @@ func ProcessVehicleDataCollection(data domain.VehicleDataCollection) (string, er
 
 }
 
-func ProcessWetherData(data domain.WeatherData, id string) (string, error) {
-	data.ID = id
+func ProcessWetherData(data domain.WeatherData) (string, error) {
+
 	if _, err := repository.AddWeatherData(data); err != nil {
+		println("Error in Processing Weather Data")
+		return "", err
+
+	}
+
+	return "Success", nil
+}
+
+func ProcessBulkWetherData(data domain.WeatherDataCollection) (string, error) {
+
+	if _, err := repository.AddWeatherDataCollection(data); err != nil {
 		println("Error in Processing Weather Data")
 		return "", err
 

@@ -38,7 +38,7 @@ func SimpleDataHandler(w http.ResponseWriter, r *http.Request) {
 	if err1 != nil {
 		panic(err1)
 	}
-	services.ProcessWetherData(owmRes, vdata.ID)
+	services.ProcessWetherData(owmRes)
 	w.Write([]byte(owmRes.ID))
 
 }
@@ -46,6 +46,7 @@ func SimpleDataHandler(w http.ResponseWriter, r *http.Request) {
 func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := []domain.RawInputData{}
+	wdc := domain.WeatherDataCollection{}
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&data)
@@ -57,25 +58,27 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 	vdc, cc := splitBulkData(data)
 	services.ProcessVehicleDataCollection(vdc)
 	icoord := cc.Cc[0]
+	//wdata:= domain.WeatherData{}
 	wdata, err := io.WeatherAPI(icoord)
 	if err != nil {
-		w.Write([]byte("Error on Weather API"))
+		w.Write([]byte("Error while reading Weather API"))
 	}
 
 	for _, coord := range cc.Cc {
 		if coordDiff(icoord, coord) { //to avoid frequent calls
-			wdata1, err := io.WeatherAPI(coord)
+			//wtemp:= domain.WeatherData{}
+			wtemp, err := io.WeatherAPI(coord)
 			if err != nil {
-				w.Write([]byte("Error on Weather API"))
+				w.Write([]byte("Error while reading  Weather API"))
 			}
-			services.ProcessWetherData(wdata1, coord.ID)
+			wdc.AddData(wtemp)
 			icoord = coord
-			wdata = wdata1
+			wdata = wtemp
 		} else {
-			services.ProcessWetherData(wdata, coord.ID)
+			wdc.AddData(wdata)
 		}
 	}
-
+	services.ProcessBulkWetherData(wdc)
 	//services.ProcessVehicleData()
 	//services.ProcessWetherData()
 }

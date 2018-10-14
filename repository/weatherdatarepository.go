@@ -19,6 +19,21 @@ func AddWeatherData(data domain.WeatherData) (string, error) {
 	return "Success", nil
 }
 
+func AddWeatherDataCollection(wdc domain.WeatherDataCollection) (string, error) {
+	fmt.Println(" **** Creating new Weather data ****\n Inserting ", len(wdc.Wdc), "number of rows")
+	defer getCluster().Close()
+	for _, data := range wdc.Wdc {
+
+		if err := Session.Query("INSERT INTO weatherdata(id,atmospherepressure,atmospheretemp,humidity,winddirection,windspeed) values(?,?,?,?,?,?)", data.ID, data.AtmospherePressure, data.AtmosphereTemp, data.Humidity, data.WindDirection, data.WindSpeed).Exec(); err != nil {
+			fmt.Println("Error while inserting Weather Data", err)
+			fmt.Println(err)
+			return "", err
+		}
+
+	}
+	return "Success", nil
+}
+
 func SelectWeatherData() (domain.WeatherDataCollection, string) {
 	fmt.Println("Selecting Weather Data colection From Database")
 	defer getCluster().Close()
