@@ -7,7 +7,7 @@ import (
 )
 
 func AddVehicleData(data domain.VehicleData) (string, error) {
-	fmt.Println(" **** Creating new data ****\n", data)
+	fmt.Println(" **** Creating new vehicle data ****\n", data)
 	defer getCluster().Close()
 	if err := Session.Query("INSERT INTO vehicledata(id,weight,vehiclespeed,acceleration,headingdirection,coolenttemp,oilpressure,intakeairtemp,rpm,engineload,elevationangle,o2,fuelflow) values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
 		data.ID, data.Weight, data.VehicleSpeed, data.Acceleration, data.HeadingDirection, data.CoolentTemp, data.OilPressure, data.IntakeAirTemp, data.Rpm, data.EngineLoad, data.ElevationAngle, data.O2, data.FuelFlow).Exec(); err != nil {
@@ -20,7 +20,23 @@ func AddVehicleData(data domain.VehicleData) (string, error) {
 	return "Success", nil
 }
 
+func AddVehicleDataCollection(vdc domain.VehicleDataCollection) (string, error) {
+	fmt.Println(" **** Creating new Vechicle data Collection ****\nAdding ", len(vdc.Vdc), " Number of Vehicle Data")
+	defer getCluster().Close()
+	for _, data := range vdc.Vdc {
+		if err := Session.Query("INSERT INTO vehicledata(id,weight,vehiclespeed,acceleration,headingdirection,coolenttemp,oilpressure,intakeairtemp,rpm,engineload,elevationangle,o2,fuelflow) values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+			data.ID, data.Weight, data.VehicleSpeed, data.Acceleration, data.HeadingDirection, data.CoolentTemp, data.OilPressure, data.IntakeAirTemp, data.Rpm, data.EngineLoad, data.ElevationAngle, data.O2, data.FuelFlow).Exec(); err != nil {
+
+			fmt.Println("Error while inserting Vehicle Data Collection", err)
+			fmt.Println(err)
+			return "", err
+		}
+	}
+	return "Success", nil
+}
+
 func SelectVehicleData(id string) (domain.VehicleData, string) {
+	fmt.Println("Selecting Vehicle data with ID : ", id)
 	defer getCluster().Close()
 	temp := domain.VehicleData{}
 	err1 := Session.Query(`SELECT  id, acceleration, coolenttemp, elevationangle, engineload, fuelflow, headingdirection, intakeairtemp, o2, oilpressure, rpm, vehiclespeed, weight 

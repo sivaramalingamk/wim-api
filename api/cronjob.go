@@ -14,9 +14,8 @@ func MergeAndInsertTraining() {
 	c.AddFunc("@every 1m", func() {
 		fmt.Println("Testing Cron")
 		tdc, _ := merger()
-		for _, td := range tdc.Tdc {
-			services.ProcessTrainingData(td)
-		}
+		services.ProcessTrainingData(tdc)
+
 	})
 	c.Start()
 

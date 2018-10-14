@@ -23,7 +23,7 @@ func SimpleDataHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Sending Vehicle data to Process ID :"))
 	w.Write([]byte(data.ID))
 
-	vdata, coord := bulkToSimple(data)
+	vdata, coord := splitData(data)
 
 	w.Write([]byte("Vehicle data"))
 
@@ -41,10 +41,6 @@ func SimpleDataHandler(w http.ResponseWriter, r *http.Request) {
 	services.ProcessWetherData(owmRes, vdata.ID)
 	w.Write([]byte(owmRes.ID))
 
-	//services.ProcessWetherData(----)
-
-	w.Write([]byte("Success at Simple vehicle data handler"))
-
 }
 
 func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
@@ -58,34 +54,30 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, icoord := bulkToSimple(data[0])
+	vdc, cc := splitBulkData(data)
+	services.ProcessVehicleDataCollection(vdc)
+	icoord := cc.Cc[0]
 	wdata, err := io.WeatherAPI(icoord)
 	if err != nil {
 		w.Write([]byte("Error on Weather API"))
 	}
 
-	for i := range data {
-		vdata, coord := bulkToSimple(data[i])
-		services.ProcessVehicleData(vdata)
-
+	for _, coord := range cc.Cc {
 		if coordDiff(icoord, coord) { //to avoid frequent calls
 			wdata1, err := io.WeatherAPI(coord)
 			if err != nil {
 				w.Write([]byte("Error on Weather API"))
 			}
-			services.ProcessWetherData(wdata1, data[i].ID)
+			services.ProcessWetherData(wdata1, coord.ID)
 			icoord = coord
 			wdata = wdata1
 		} else {
-			services.ProcessWetherData(wdata, data[i].ID)
+			services.ProcessWetherData(wdata, coord.ID)
 		}
-
 	}
 
 	//services.ProcessVehicleData()
-
 	//services.ProcessWetherData()
-
 }
 
 //@ if the coordinate difference is higher than the cordinate threshold then call weathermap api

@@ -17,6 +17,18 @@ func ProcessVehicleData(data domain.VehicleData) (string, error) {
 
 }
 
+func ProcessVehicleDataCollection(data domain.VehicleDataCollection) (string, error) {
+
+	if _, err := repository.AddVehicleDataCollection(data); err != nil {
+		println("Error in Processing Vehicle Data Collection")
+		return "", err
+
+	}
+
+	return "Success", nil
+
+}
+
 func ProcessWetherData(data domain.WeatherData, id string) (string, error) {
 	data.ID = id
 	if _, err := repository.AddWeatherData(data); err != nil {
@@ -28,14 +40,14 @@ func ProcessWetherData(data domain.WeatherData, id string) (string, error) {
 	return "Success", nil
 }
 
-func ProcessTrainingData(data domain.TrainingData) (string, error) {
+func ProcessTrainingData(data domain.TrainingDataCollection) (string, error) {
+	if len(data.Tdc) > 1 {
+		if _, err := repository.AddTrainingData(data); err != nil {
+			println("Error in Processing Training Data")
+			return "", err
 
-	if _, err := repository.AddTrainingData(data); err != nil {
-		println("Error in Processing Training Data")
-		return "", err
-
+		}
 	}
-
 	return "Success", nil
 
 }

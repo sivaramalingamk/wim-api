@@ -7,7 +7,7 @@ import (
 )
 
 func AddWeatherData(data domain.WeatherData) (string, error) {
-	fmt.Println(" **** Creating new data ****\n", data)
+	fmt.Println(" **** Creating new Weather data ****\n", data)
 	defer getCluster().Close()
 	if err := Session.Query("INSERT INTO weatherdata(id,atmospherepressure,atmospheretemp,humidity,winddirection,windspeed) values(?,?,?,?,?,?)", data.ID, data.AtmospherePressure, data.AtmosphereTemp, data.Humidity, data.WindDirection, data.WindSpeed).Exec(); err != nil {
 
@@ -20,6 +20,7 @@ func AddWeatherData(data domain.WeatherData) (string, error) {
 }
 
 func SelectWeatherData() (domain.WeatherDataCollection, string) {
+	fmt.Println("Selecting Weather Data colection From Database")
 	defer getCluster().Close()
 	wdata := []domain.WeatherData{}
 	wDataCollection := domain.WeatherDataCollection{wdata}
@@ -32,5 +33,6 @@ func SelectWeatherData() (domain.WeatherDataCollection, string) {
 		log.Fatal(err)
 		return wDataCollection, "Error"
 	}
+	fmt.Println("Selected ", len(wDataCollection.Wdc), " Number of Weather Data")
 	return wDataCollection, "success"
 }
