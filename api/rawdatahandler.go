@@ -58,7 +58,6 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 	vdc, cc := splitBulkData(data)
 	services.ProcessVehicleDataCollection(vdc)
 	icoord := cc.Cc[0]
-	//wdata:= domain.WeatherData{}
 	wdata, err := io.WeatherAPI(icoord)
 	if err != nil {
 		w.Write([]byte("Error while reading Weather API"))
@@ -66,24 +65,23 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, coord := range cc.Cc {
 		if coordDiff(icoord, coord) { //to avoid frequent calls
-			//wtemp:= domain.WeatherData{}
+
 			wtemp, err := io.WeatherAPI(coord)
 			if err != nil {
 				w.Write([]byte("Error while reading  Weather API"))
 			}
-			wdc.AddData(wtemp)
 			icoord = coord
 			wdata = wtemp
+			wdc.AddData(wdata)
 		} else {
+			wdata.ID = coord.ID //to insert unique rows
 			wdc.AddData(wdata)
 		}
 	}
 	services.ProcessBulkWetherData(wdc)
-	//services.ProcessVehicleData()
-	//services.ProcessWetherData()
 }
 
-//@ if the coordinate difference is higher than the cordinate threshold then call weathermap api
+//if the coordinate difference is higher than the cordinate threshold then call weathermap api
 func coordDiff(coordinate1 domain.Coordinate, coordinate2 domain.Coordinate) bool {
 
 	if math.Abs(coordinate1.Latitude-coordinate2.Latitude) > io.Coord_Threshold || math.Abs(coordinate1.Longitude-coordinate2.Longitude) > io.Coord_Threshold {
