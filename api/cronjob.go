@@ -24,12 +24,16 @@ func MergeAndInsertTraining() {
 func merger() (domain.TrainingDataCollection, string) {
 
 	wdc, _ := repository.SelectWeatherData()
+	vdc, _ := repository.SelectAllVehicle()
 	tdc := domain.TrainingDataCollection{}
-
 	for _, wd := range wdc.Wdc {
-		vd, msg := repository.SelectVehicleData(wd.ID)
-		fmt.Println("VAlue:", vd.ID, "Message:", msg)
-		tdc.AddData(trainDataMerger(vd, wd))
+		for _, vd := range vdc.Vdc {
+			if vd.ID == wd.ID {
+				fmt.Println("Adding values VehicleID:", vd.ID, "WeatherID:", wd.ID)
+				tdc.AddData(trainDataMerger(vd, wd))
+			}
+		}
+
 	}
 
 	return tdc, "Success"

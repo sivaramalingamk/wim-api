@@ -46,6 +46,7 @@ func SimpleDataHandler(w http.ResponseWriter, r *http.Request) {
 func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := []domain.RawInputData{}
+	//coordsForAPI:= domain.CoordinateCollection{}
 	wdc := domain.WeatherDataCollection{}
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
@@ -57,6 +58,7 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	vdc, cc := splitBulkData(data)
 	services.ProcessVehicleDataCollection(vdc)
+
 	icoord := cc.Cc[0]
 	wdata, err := io.WeatherAPI(icoord)
 	if err != nil {
@@ -79,6 +81,23 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	services.ProcessBulkWetherData(wdc)
+}
+
+func filterCoords(collection domain.CoordinateCollection) domain.CoordinateCollection {
+
+	ic := collection.Cc[0]
+	rc := domain.CoordinateCollection{}
+	for _, coord := range collection.Cc {
+		if coordDiff(ic, coord) { //to avoid frequent calls
+			ic = coord
+			rc.AddData(ic)
+
+		} else {
+			rc.AddData(ic)
+
+		}
+	}
+	return rc
 }
 
 //if the coordinate difference is higher than the cordinate threshold then call weathermap api

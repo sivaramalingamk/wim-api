@@ -49,3 +49,20 @@ func SelectVehicleData(id string) (domain.VehicleData, string) {
 
 	return temp, "success"
 }
+
+func SelectAllVehicle() (domain.VehicleDataCollection, string) {
+	fmt.Println("Selecting All Vehicle data  ")
+	defer getCluster().Close()
+	temp := domain.VehicleData{}
+	res := domain.VehicleDataCollection{}
+	iter := Session.Query(`SELECT  id, acceleration, coolenttemp, elevationangle, engineload, fuelflow, headingdirection, intakeairtemp, o2, oilpressure, rpm, vehiclespeed, weight 
+	FROM vehicledata`).Iter()
+	for iter.Scan(&temp.ID, &temp.Acceleration, &temp.CoolentTemp, &temp.ElevationAngle, &temp.EngineLoad, &temp.FuelFlow, &temp.HeadingDirection, &temp.IntakeAirTemp, &temp.O2, &temp.OilPressure, &temp.Rpm, &temp.VehicleSpeed, &temp.Weight) {
+		res.AddData(temp)
+	}
+
+	if err := iter.Close(); err != nil {
+		return res, "Error"
+	}
+	return res, "success"
+}
