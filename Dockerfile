@@ -2,6 +2,7 @@
 FROM golang:1.11-alpine AS build_base
 # Install some dependencies needed to build the project
 RUN apk add bash ca-certificates git gcc g++ libc-dev
+RUN MKDIR /go/bin/wim-api
 WORKDIR /go/src/github.com/sivaramalingamk/wim-api
 
 # Force the go compiler to use modules
