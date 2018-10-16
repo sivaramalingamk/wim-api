@@ -34,9 +34,9 @@ FROM alpine AS wim-api
 # We add the certificates to be able to verify remote weaviate instances
 RUN apk add ca-certificates
 # Finally we copy the statically compiled Go binary.
-COPY --from=server_builder /go/bin/wim-api /bin/wim-api
-ENTRYPOINT ["/bin/wim-api"]
+COPY --from=server_builder go/src/github.com/sivaramalingamk/wim-api .
 
+CMD ["./wim-api"]
 
 # Expose the application on port 8080.
 # This should be the same as in the app.conf file
