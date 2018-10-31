@@ -1,7 +1,9 @@
 package services
 
 import (
+	"fmt"
 	"wim-api/domain"
+	"wim-api/ml"
 	"wim-api/repository"
 )
 
@@ -60,5 +62,28 @@ func ProcessTrainingData(data domain.TrainingDataCollection) (string, error) {
 		}
 	}
 	return "Success", nil
+
+}
+
+func ProcessOutputData(id string, year int) (domain.OutputDataCollection, error) {
+	odc := domain.OutputDataCollection{}
+
+	odc, err := repository.SelectOutputData(id, year)
+	if err != nil {
+		fmt.Println("Error in Processing OUTPUT Data")
+		return odc, err
+	}
+	fmt.Println("From Service length=", len(odc.Odc))
+	return odc, nil
+
+}
+
+func ProcessInference() {
+	tdc, m := repository.SelectAllTraining()
+	if m == "success" {
+		ml.Regression(tdc)
+	} else {
+		println("Error while selecting trainig data")
+	}
 
 }

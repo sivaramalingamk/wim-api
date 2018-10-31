@@ -1,0 +1,94 @@
+CREATE TABLE wim.vehicledata (
+    id text,
+    time timestamp,
+    acceleration int,
+    coolenttemp int,
+    elevationangle int,
+    engineload int,
+    fuelflow int,
+    headingdirection int,
+    intakeairtemp int,
+    o2 int,
+    oilpressure int,
+    rpm int,
+    vehiclespeed int,
+    weight int,
+    PRIMARY KEY(id, time)
+);
+
+CREATE TABLE wim.weatherdata (
+    id text,
+    time timestamp,
+    lat double,
+    lon double,
+    atmospherepressure int,
+    atmospheretemp int,
+    humidity int,
+    winddirection int,
+    windspeed int,
+    primary key(id,time)
+);
+
+CREATE TABLE wim.trainingdata (
+    id text,
+    acceleration int,
+    atmospherepressure int,
+    atmospheretemp int,
+    coolanttemp int,
+    elevationangle int,
+    engineload int,
+    fuelflow int,
+    headingdirection int,
+    humidity int,
+    intakeairtemp int,
+    o2 int,
+    oilpressure int,
+    rpm int,
+    vehiclespeed int,
+    weight int,
+    winddirection int,
+    windspeed int,
+    primary key(id)
+
+);
+
+CREATE TABLE wim.wimdata (
+    id text ,
+    year int,
+    collectedtime timestamp,
+    insertedtime timestamp,
+    lat double,
+    lon double,
+    acceleration int,
+    atmospherepressure int,
+    atmospheretemp int,
+    coolanttemp int,
+    elevationangle int,
+    engineload int,
+    fuelflow int,
+    headingdirection int,
+    humidity int,
+    intakeairtemp int,
+    o2 int,
+    oilpressure int,
+    rpm int,
+    vehiclespeed int,
+    weight int,
+    winddirection int,
+    windspeed int,
+    PRIMARY KEY ((id,year),collectedtime)
+
+);
+
+CREATE TABLE wim.outputdata (
+    id text,
+    year int,
+    time timestamp,
+    endlat double,
+    endlon double,
+    isoverloaded boolean,
+    startlat double,
+    startlon double,
+    weight int,
+    PRIMARY KEY ((id,year),time)
+);

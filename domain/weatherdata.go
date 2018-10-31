@@ -1,12 +1,17 @@
 package domain
 
+import "time"
+
 type WeatherData struct {
-	ID                 string `json:"id"`
-	WindSpeed          int    `json:"windSpeed"`
-	WindDirection      int    `json:"windDirection"`
-	AtmosphereTemp     int    `json:"atmosphereTemp"`
-	AtmospherePressure int    `json:"atmospherePressure"`
-	Humidity           int    `json:"humidity"`
+	ID                 string    `json:"id"`
+	Latitude           float64   `json:"latitude"`
+	Longitude          float64   `json:"longitude"`
+	Time               time.Time `json:"time"`
+	WindSpeed          int       `json:"windSpeed"`
+	WindDirection      int       `json:"windDirection"`
+	AtmosphereTemp     int       `json:"atmosphereTemp"`
+	AtmospherePressure int       `json:"atmospherePressure"`
+	Humidity           int       `json:"humidity"`
 }
 
 type WeatherDataCollection struct {

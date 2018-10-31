@@ -46,7 +46,6 @@ func SimpleDataHandler(w http.ResponseWriter, r *http.Request) {
 func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := []domain.RawInputData{}
-	//coordsForAPI:= domain.CoordinateCollection{}
 	wdc := domain.WeatherDataCollection{}
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
@@ -58,7 +57,10 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	vdc, cc := splitBulkData(data)
 	services.ProcessVehicleDataCollection(vdc)
-
+	if len(cc.Cc) == 0 {
+		w.Write([]byte("No vehicle Data found"))
+		return
+	}
 	icoord := cc.Cc[0]
 	wdata, err := io.WeatherAPI(icoord)
 	if err != nil {

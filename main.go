@@ -7,13 +7,15 @@ import (
 	"net/http"
 	"wim-api/api"
 	"wim-api/io"
+	"wim-api/services"
 )
 
 func main() {
-	fmt.Println(" This is a Server")
+	fmt.Println(" WIM API Serveice is running on Port 8080")
 	api.MergeAndInsertTraining()
 	io.API_Key = api.ApiKeySetter()
 	r := chi.NewRouter()
+	services.ProcessInference()
 	// A good base middleware stack
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
@@ -22,6 +24,7 @@ func main() {
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome"))
 	})
+	r.Get("/{id},{year}", api.GetOutput)
 	r.Route("/ecudata", func(r chi.Router) {
 		r.Post("/simple", api.SimpleDataHandler)
 		r.Post("/bulk", api.BulkVehicleDataHandler)

@@ -34,6 +34,8 @@ func WeatherAPI(coordinate domain.Coordinate) (domain.WeatherData, error) {
 	wdata := owmDataToWeather(owmdata)
 	fmt.Println("Temp=", wdata.AtmosphereTemp)
 	wdata.ID = coordinate.ID
+	wdata.Latitude = coordinate.Latitude
+	wdata.Longitude = coordinate.Longitude
 	return wdata, err
 }
 
