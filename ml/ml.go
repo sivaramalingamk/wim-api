@@ -22,16 +22,16 @@ func Regression(collection domain.TrainingDataCollection) {
 	r.SetVar(7, "O2_Flow")
 	r.SetVar(8, "Fuel_Flow")
 
-	//r.SetVar(9, "RPM")
-	//r.SetVar(10, "Intake_Air_Temp")
-	//r.SetVar(11, "Atmosphere_Temp")
+	r.SetVar(9, "RPM")
+	r.SetVar(10, "Intake_Air_Temp")
+	r.SetVar(11, "Atmosphere_Temp")
 	//r.SetVar(12, "Atmosphere_Pressure")
 	//r.SetVar(13, "Humidity")
 	//r.SetVar(14, "Wind_Speed")
 	//r.SetVar(15, "Wind_Direction")
 
 	for _, td := range collection.Tdc {
-		r.Train(regression.DataPoint(float64(td.Weight), []float64{float64(td.Acceleration), float64(td.VehicleSpeed), float64(td.HeadingDirection), float64(td.ElevationAngle), float64(td.EngineLoad), float64(td.CoolantTemp), float64(td.OilPressure), float64(td.O2), float64(td.FuelFlow) /*,float64(td.Rpm),float64(td.IntakeAirTemp),float64(td.AtmosphereTemp),float64(td.AtmospherePressure),float64(td.Humidity),float64(td.WindSpeed),float64(td.WindDirection)*/}))
+		r.Train(regression.DataPoint(float64(td.Weight), []float64{float64(td.Acceleration), float64(td.VehicleSpeed), float64(td.HeadingDirection), float64(td.ElevationAngle), float64(td.EngineLoad), float64(td.CoolantTemp), float64(td.OilPressure), float64(td.O2), float64(td.FuelFlow), float64(td.Rpm), float64(td.IntakeAirTemp), float64(td.AtmosphereTemp) /*,float64(td.AtmospherePressure),float64(td.Humidity),float64(td.WindSpeed),float64(td.WindDirection)*/}))
 	}
 
 	/*
@@ -80,6 +80,10 @@ func Regression(collection domain.TrainingDataCollection) {
 		r.Train(
 				regression.DataPoint(25.7, []float64{3353000, 16.9, 6.7}))
 	*/
+	r.AddCross(regression.MultiplierCross(1, 2))
+	r.AddCross(regression.MultiplierCross(1, 3))
+	r.AddCross(regression.MultiplierCross(2, 3, 4))
+	r.AddCross(regression.MultiplierCross(3, 4))
 	r.Run()
 
 	fmt.Printf("Regression formula:\n%v\n", r.Formula)
@@ -99,4 +103,6 @@ func Regression(collection domain.TrainingDataCollection) {
 		fmt.Println("R^2 was %.2f, but we expected > 80", r.R2)
 	}
 
+	prediction, err := r.Predict([]float64{1.01, 15.50, 30.00, 19.43, 4.39, 50.00, 1220.00, 34.00, 24.00, 999.00, 233.00, 303.20})
+	fmt.Println("Predicted weight is :", prediction, " With error: ", err)
 }

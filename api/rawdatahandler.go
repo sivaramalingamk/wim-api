@@ -105,7 +105,7 @@ func filterCoords(collection domain.CoordinateCollection) domain.CoordinateColle
 //if the coordinate difference is higher than the cordinate threshold then call weathermap api
 func coordDiff(coordinate1 domain.Coordinate, coordinate2 domain.Coordinate) bool {
 
-	if math.Abs(coordinate1.Latitude-coordinate2.Latitude) > io.Coord_Threshold || math.Abs(coordinate1.Longitude-coordinate2.Longitude) > io.Coord_Threshold {
+	if math.Abs(float64(coordinate1.Latitude)-float64(coordinate2.Latitude)) > io.Coord_Threshold || math.Abs(float64(coordinate1.Longitude)-float64(coordinate2.Longitude)) > io.Coord_Threshold {
 		return true
 	}
 
