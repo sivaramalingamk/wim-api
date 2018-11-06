@@ -6,7 +6,7 @@ import (
 	"wim-api/domain"
 )
 
-func Regression(collection domain.TrainingDataCollection) {
+func Regression(collection domain.TrainingDataCollection) *regression.Regression {
 
 	r := new(regression.Regression)
 
@@ -59,4 +59,6 @@ func Regression(collection domain.TrainingDataCollection) {
 
 	prediction, err := r.Predict([]float64{1.01, 15.50, 30.00, 19.43, 4.39, 50.00, 1220.00, 34.00, 24.00, 999.00, 233.00, 303.20})
 	fmt.Println("Predicted weight is :", prediction, " With error: ", err)
+
+	return r
 }

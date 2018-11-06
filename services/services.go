@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"github.com/sivaramalingamk/regression"
 	"wim-api/domain"
 	"wim-api/ml"
 	"wim-api/repository"
@@ -78,12 +79,15 @@ func ProcessOutputData(id string, year int) (domain.OutputDataCollection, error)
 
 }
 
-func ProcessInference() {
+func ProcessInference() *regression.Regression {
 	tdc, m := repository.SelectAllTraining()
+	//r regression.Regression{}
 	if m == "success" {
-		ml.Regression(tdc)
+		r := ml.Regression(tdc)
+		return r
 	} else {
 		println("Error while selecting trainig data")
+		return nil
 	}
-
+	//return r
 }

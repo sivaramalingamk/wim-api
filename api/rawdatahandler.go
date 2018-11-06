@@ -54,35 +54,38 @@ func BulkVehicleDataHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error on GETBULK DATA"))
 		return
 	}
-
-	vdc, cc := splitBulkData(data)
-	services.ProcessVehicleDataCollection(vdc)
-	if len(cc.Cc) == 0 {
-		w.Write([]byte("No vehicle Data found"))
-		return
-	}
-	icoord := cc.Cc[0]
-	wdata, err := io.WeatherAPI(icoord)
-	if err != nil {
-		w.Write([]byte("Error while reading Weather API"))
-	}
-
-	for _, coord := range cc.Cc {
-		if coordDiff(icoord, coord) { //to avoid frequent calls
-
-			wtemp, err := io.WeatherAPI(coord)
-			if err != nil {
-				w.Write([]byte("Error while reading  Weather API"))
-			}
-			icoord = coord
-			wdata = wtemp
-			wdc.AddData(wdata)
-		} else {
-			wdata.ID = coord.ID //to insert unique rows
-			wdc.AddData(wdata)
+	go func() {
+		vdc, cc := splitBulkData(data)
+		go services.ProcessVehicleDataCollection(vdc)
+		if len(cc.Cc) == 0 {
+			w.Write([]byte("No vehicle Data found"))
+			return
 		}
-	}
-	services.ProcessBulkWetherData(wdc)
+
+		icoord := cc.Cc[0]
+		wdata, err := io.WeatherAPI(icoord)
+		if err != nil {
+			w.Write([]byte("Error while reading Weather API"))
+		}
+
+		for _, coord := range cc.Cc {
+			if coordDiff(icoord, coord) { //to avoid frequent calls
+
+				wtemp, err := io.WeatherAPI(coord)
+				if err != nil {
+					w.Write([]byte("Error while reading  Weather API"))
+				}
+				icoord = coord
+				wdata = wtemp
+				wdc.AddData(wdata)
+			} else {
+				wdata.ID = coord.ID //to insert unique rows
+				wdc.AddData(wdata)
+			}
+		}
+
+		services.ProcessBulkWetherData(wdc)
+	}()
 }
 
 func filterCoords(collection domain.CoordinateCollection) domain.CoordinateCollection {
