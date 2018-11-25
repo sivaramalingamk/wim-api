@@ -23,6 +23,7 @@ func AddVehicleData(data domain.VehicleData) (string, error) {
 func AddVehicleDataCollection(vdc domain.VehicleDataCollection) (string, error) {
 	fmt.Println(" **** Creating new Vechicle data Collection ****\nAdding ", len(vdc.Vdc), " Number of Vehicle Data")
 	defer getCluster().Close()
+
 	for _, data := range vdc.Vdc {
 		if err := Session.Query("INSERT INTO vehicledata(id,time,weight,vehiclespeed,acceleration,headingdirection,coolenttemp,oilpressure,intakeairtemp,rpm,engineload,elevationangle,o2,fuelflow) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 			data.ID, data.Time, data.Weight, data.VehicleSpeed, data.Acceleration, data.HeadingDirection, data.CoolentTemp, data.OilPressure, data.IntakeAirTemp, data.Rpm, data.EngineLoad, data.ElevationAngle, data.O2, data.FuelFlow).Exec(); err != nil {
@@ -64,5 +65,5 @@ func SelectAllVehicle() (domain.VehicleDataCollection, string) {
 	if err := iter.Close(); err != nil {
 		return res, "Error"
 	}
-	return res, "success"
+	return res, "Success"
 }

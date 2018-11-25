@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/robfig/cron"
 	"wim-api/domain"
+	"wim-api/io"
 	"wim-api/repository"
 	"wim-api/services"
 )
@@ -11,7 +12,7 @@ import (
 func MergeAndInsertTraining() {
 	//	data:=[]domain.TrainingData{}
 	c := cron.New()
-	c.AddFunc("@every 1m", func() {
+	c.AddFunc("@every 5m", func() {
 		fmt.Println("Testing Cron")
 		tdc, _ := merger()
 		services.ProcessTrainingData(tdc)
@@ -21,44 +22,71 @@ func MergeAndInsertTraining() {
 
 }
 
+func PopulateHistoricWeather() {
+	coordinate := domain.Coordinate{}
+	coordinate.Latitude = -33.918861
+	coordinate.Longitude = 18.423300
+
+	c := cron.New()
+	c.AddFunc("@every 10m", func() {
+		fmt.Println("Getting Current Weather Data for Cape Town")
+		owmData, err := io.WeatherAPI(coordinate)
+		if err != nil {
+			fmt.Println("Error :", err, owmData.ID)
+
+		} else {
+			fmt.Println("Writing into database")
+			services.ProcessHistoricalWeatherData(owmData)
+		}
+
+	})
+	c.Start()
+}
 func merger() (domain.TrainingDataCollection, string) {
 	tdc := domain.TrainingDataCollection{}
-	go func() {
-		wdc := make(chan domain.WeatherDataCollection)
-		vdc := make(chan domain.VehicleDataCollection)
-		go func() { wdc <- getWeatherData() }()
-		go func() { vdc <- getVehicleData() }()
-		wdC := <-wdc
-		vdC := <-vdc
 
-		for _, wd := range wdC.Wdc {
-			for _, vd := range vdC.Vdc {
-				if vd.ID == wd.ID {
-					fmt.Println("Adding values VehicleID:", vd.ID, "WeatherID:", wd.ID)
-					tdc.AddData(trainDataMerger(vd, wd))
-				}
+	wdc := make(chan domain.WeatherDataCollection)
+	vdc := make(chan domain.VehicleDataCollection)
+
+	go func() { wdc <- getWeatherData() }()
+	go func() { vdc <- getVehicleData() }()
+
+	wdC := <-wdc
+	vdC := <-vdc
+
+	/*
+	 vdC,_:=repository.SelectAllVehicle()
+	 wdC,_:=repository.SelectWeatherData()
+	*/
+	fmt.Print("Lenght of WDC=", len(wdC.Wdc))
+	fmt.Print("Lenght of vDC=", len(vdC.Vdc))
+	for _, wd := range wdC.Wdc {
+		for _, vd := range vdC.Vdc {
+			if vd.ID == wd.ID {
+				fmt.Println("Adding values VehicleID:", vd.ID, "WeatherID:", wd.ID)
+				tdc.AddData(trainDataMerger(vd, wd))
 			}
-
 		}
-	}()
+
+	}
 
 	return tdc, "Success"
+
 }
 
 func getWeatherData() domain.WeatherDataCollection {
-	wdc := domain.WeatherDataCollection{}
-	if wdc, msg := repository.SelectWeatherData(); msg != "success" {
-		print("Error while selecting weather data")
-		return wdc
-	}
+
+	wdc, _ := repository.SelectWeatherData()
+
 	return wdc
 }
 
 func getVehicleData() domain.VehicleDataCollection {
-	//vdc:=domain.VehicleDataCollection{}
+
 	vdc, _ := repository.SelectAllVehicle()
 	return vdc
 }
+
 func trainDataMerger(vdata domain.VehicleData, wdata domain.WeatherData) domain.TrainingData {
 	var tdata domain.TrainingData
 

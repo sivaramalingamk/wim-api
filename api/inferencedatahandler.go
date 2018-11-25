@@ -6,8 +6,9 @@ import (
 	"wim-api/services"
 )
 
-func InferenceOutputHandler(w http.ResponseWriter, r *http.Request) {
-	res := services.ProcessInference()
+func InferenceOutputHandlerReg(w http.ResponseWriter, r *http.Request) {
+
+	res := services.ProcessRegression()
 	w.Write([]byte("Running Inference \n"))
 	formula, _ := json.Marshal(res.Formula)
 	w.Write(formula)
@@ -33,4 +34,11 @@ func InferenceOutputHandler(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(od.IsOverloaded))
 
 	}*/
+}
+
+func InferenceOutputHandlerNN(w http.ResponseWriter, r *http.Request) {
+
+	services.ProcessNN()
+	w.Write([]byte("Running NN \n"))
+
 }

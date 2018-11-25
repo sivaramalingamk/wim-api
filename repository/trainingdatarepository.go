@@ -14,7 +14,7 @@ func AddTrainingData(tdc domain.TrainingDataCollection) (string, error) {
 
 			fmt.Println("Error while inserting Training Data", err)
 			fmt.Println(err)
-			return "", err
+			return "Error", err
 		}
 	}
 	return "Success", nil
@@ -34,5 +34,5 @@ FROM trainingdata`).Iter()
 	if err := iter.Close(); err != nil {
 		return res, "Error"
 	}
-	return res, "success"
+	return res, "Success"
 }

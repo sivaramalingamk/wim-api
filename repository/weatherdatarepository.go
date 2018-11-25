@@ -48,5 +48,5 @@ func SelectWeatherData() (domain.WeatherDataCollection, string) {
 		return wDataCollection, "Error"
 	}
 	fmt.Println("Selected ", len(wDataCollection.Wdc), " Number of Weather Data")
-	return wDataCollection, "success"
+	return wDataCollection, "Success"
 }

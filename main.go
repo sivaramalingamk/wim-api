@@ -11,8 +11,9 @@ import (
 
 func main() {
 	fmt.Println(" WIM API Serveice is running on Port 8080")
-	go api.MergeAndInsertTraining()
+	//go api.MergeAndInsertTraining()
 	io.API_Key = api.ApiKeySetter()
+	go api.PopulateHistoricWeather()
 	r := chi.NewRouter()
 	//go services.ProcessInference()
 	// A good base middleware stack
@@ -30,7 +31,8 @@ func main() {
 
 	})
 	r.Route("/infer", func(r chi.Router) {
-		r.Get("/", api.InferenceOutputHandler)
+		r.Get("/Regression", api.InferenceOutputHandlerReg)
+		r.Get("/NN", api.InferenceOutputHandlerNN)
 		//r.Post("/simple", api.SimpleInferenceIOHanlder)
 		//	r.Post("/bulk", api.BulkInferenceIOHanlder)
 

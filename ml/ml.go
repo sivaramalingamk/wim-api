@@ -2,7 +2,9 @@ package ml
 
 import (
 	"fmt"
+	"github.com/sivaramalingamk/gobrain"
 	"github.com/sivaramalingamk/regression"
+	"math/rand"
 	"wim-api/domain"
 )
 
@@ -61,4 +63,39 @@ func Regression(collection domain.TrainingDataCollection) *regression.Regression
 	fmt.Println("Predicted weight is :", prediction, " With error: ", err)
 
 	return r
+}
+
+func NN() {
+	rand.Seed(0)
+
+	// create the XOR representation patter to train the network
+	patterns := [][][]float64{
+		{{0, 0, 2, 4}, {12}},
+		{{0, 1, 2, 5}, {15}},
+		{{1, 0, 5, 2}, {18}},
+		{{1, 1, 4, 5}, {17}},
+	}
+
+	// instantiate the Feed Forward
+	ff := &gobrain.FeedForward{}
+
+	// initialize the Neural Network;
+	// the networks structure will contain:
+	// 2 inputs, 2 hidden nodes and 1 output.
+	ff.Init(4, 3, 1)
+
+	// train the network using the XOR patterns
+	// the training will run for 1000 epochs
+	// the learning rate is set to 0.6 and the momentum factor to 0.4
+	// use true in the last parameter to receive reports about the learning error
+	ff.Train(patterns, 10000, 0.6, 0.4, true)
+
+	ff.Test(patterns)
+
+	inputs := []float64{1, 1, 2, 2}
+	output := ff.Update(inputs)
+	fmt.Println("Here we go")
+	fmt.Println("The result is :", output, "len :", len(output), " pattern :")
+	fmt.Println("_____------_____")
+
 }

@@ -32,6 +32,16 @@ func ProcessVehicleDataCollection(data domain.VehicleDataCollection) (string, er
 
 }
 
+func ProcessHistoricalWeatherData(data domain.WeatherData) (string, error) {
+	if _, err := repository.AddHistoricalWeatherData(data); err != nil {
+		println("Error in Processing Weather Data")
+		return "", err
+
+	}
+
+	return "Success", nil
+}
+
 func ProcessWetherData(data domain.WeatherData) (string, error) {
 
 	if _, err := repository.AddWeatherData(data); err != nil {
@@ -55,11 +65,11 @@ func ProcessBulkWetherData(data domain.WeatherDataCollection) (string, error) {
 }
 
 func ProcessTrainingData(data domain.TrainingDataCollection) (string, error) {
-	if len(data.Tdc) > 1 {
+	println("Printing from Service.ProcessTrainingData lengh of data=", len(data.Tdc))
+	if len(data.Tdc) > 0 {
 		if _, err := repository.AddTrainingData(data); err != nil {
 			println("Error in Processing Training Data")
-			return "", err
-
+			return "Error", err
 		}
 	}
 	return "Success", nil
@@ -79,15 +89,21 @@ func ProcessOutputData(id string, year int) (domain.OutputDataCollection, error)
 
 }
 
-func ProcessInference() *regression.Regression {
+func ProcessRegression() *regression.Regression {
+
 	tdc, m := repository.SelectAllTraining()
+
 	//r regression.Regression{}
-	if m == "success" {
+	if m == "Success" {
 		r := ml.Regression(tdc)
 		return r
 	} else {
 		println("Error while selecting trainig data")
 		return nil
 	}
-	//return r
+
+}
+
+func ProcessNN() {
+	ml.NN()
 }

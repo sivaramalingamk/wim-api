@@ -29,6 +29,17 @@ CREATE TABLE wim.weatherdata (
     primary key(id,time)
 );
 
+CREATE TABLE wim.historicweatherdata (
+    time timestamp,
+    atmospherepressure float,
+    atmospheretemp float,
+    humidity float,
+    winddirection float,
+    windspeed float,
+    primary key(time)
+);
+
+
 CREATE TABLE wim.trainingdata (
     id text,
     acceleration float,
