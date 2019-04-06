@@ -6,7 +6,7 @@ var Session *gocql.Session
 
 func getCluster() *gocql.Session {
 	var err error
-	cluster := gocql.NewCluster("155.238.46.32:9042")
+	cluster := gocql.NewCluster("scylla.scyla:9042")
 	cluster.Keyspace = "wim"
 	Session, err = cluster.CreateSession()
 	if err != nil {
